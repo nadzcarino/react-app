@@ -1,13 +1,17 @@
 import React from "react";
 import axios from "axios";
 import Todo from "./todo.component";
+import { Link } from "react-router-dom";
 
 class TodosList extends React.Component {
   constructor() {
     super();
     this.state = {
       todos: [],
+      selectedTodo: null,
     };
+
+    this.handleSelectTodo = this.handleSelectTodo.bind(this);
   }
 
   componentDidMount() {
@@ -21,8 +25,12 @@ class TodosList extends React.Component {
 
   todoList() {
     return this.state.todos.map((todo, index) => (
-      <Todo todo={todo} key={index} />
+      <Todo todo={todo} key={index} selectTodo={this.handleSelectTodo} />
     ));
+  }
+
+  handleSelectTodo(selectedTodo) {
+    this.setState({ selectedTodo: selectedTodo });
   }
 
   render() {
@@ -38,11 +46,11 @@ class TodosList extends React.Component {
               <th>Priority</th>
             </tr>
           </thead>
-          <tbody>
-          {this.todoList()}
-          </tbody>
+          <tbody>{this.todoList()}</tbody>
         </table>
-        <button type="button" class="btn btn-outline-primary">Edit</button>
+        <Link className="btn btn-outline-primary" to={{ pathname: "/create/", selectedTodo: this.state.selectedTodo }}>
+          Edit
+        </Link>
       </div>
     );
   }
