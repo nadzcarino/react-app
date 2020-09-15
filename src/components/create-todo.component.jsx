@@ -2,21 +2,35 @@ import React from "react";
 import axios from "axios";
 
 class CreateTodo extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       description: "",
       responsible: "",
       priority: "",
-      completed: "false",
+      completed: false,
+      _id: null,
     };
 
     this.onChangeDesciption = this.onChangeDesciption.bind(this);
     this.onChangeResponsible = this.onChangeResponsible.bind(this);
     this.onChangePriority = this.onChangePriority.bind(this);
+    this.onChangeComplete = this.onChangeComplete.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  setDefaultValue() {
+    const { selectedTodo } = this.props.location;
+    if (selectedTodo) {
+      this.setState({
+        description: selectedTodo.description,
+        responsible: selectedTodo.responsible,
+        priority: selectedTodo.priority,
+        completed: selectedTodo.completed,
+        _id: selectedTodo._id,
+      });
+    }
+  }
   onChangeDesciption(e) {
     this.setState({ description: e.target.value });
   }
@@ -29,10 +43,14 @@ class CreateTodo extends React.Component {
     this.setState({ priority: e.target.value });
   }
 
+  onChangeComplete(e) {
+    this.setState({ completed: !this.state.completed });
+  }
+
   onSubmit(e) {
     e.preventDefault();
 
-    const { description, responsible, priority, completed } = this.state;
+    const { _id, description, responsible, priority, completed } = this.state;
     const newTodo = {
       description: description,
       responsible: responsible,
@@ -40,12 +58,23 @@ class CreateTodo extends React.Component {
       completed: completed,
     };
 
-    axios
-      .post("http://localhost:4000/todos/add", newTodo)
+    if(_id) {
+      axios
+      .post(`http://localhost:4000/todos/update/${_id}`, newTodo)
       .then((res) => {
-        console.log(res);
+        this.props.history.push("/")
       })
       .catch((error) => console.error(error));
+    }
+    else {
+      axios
+      .post("http://localhost:4000/todos/add", newTodo)
+      .then((res) => {
+        this.props.history.push("/")
+      })
+      .catch((error) => console.error(error));
+    }
+
 
     this.setState({
       description: "",
@@ -53,9 +82,33 @@ class CreateTodo extends React.Component {
       priority: "",
       completed: false,
     });
+
+
   }
 
+  componentDidMount() {
+    this.setDefaultValue();
+  }
   render() {
+    const showCompleted = () => {
+      if (this.state._id) {
+        return (
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              id="completedCheckbox"
+              type="checkbox"
+              name="completedCheckbox"
+              onChange={this.onChangeComplete}
+              checked={this.state.completed}
+            />
+            <label className="form-check-label" htmlFor="completedCheckbox">
+              Completed
+            </label>
+          </div>
+        );
+      }
+    };
     return (
       <div style={{ marginTop: 10 }}>
         <h3>Create New Todo</h3>
@@ -110,7 +163,9 @@ class CreateTodo extends React.Component {
               <label className="form-check-label">High</label>
             </div>
           </div>
+          {showCompleted()}
 
+          <br />
           <div className="form-group">
             <input
               type="submit"
