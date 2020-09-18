@@ -58,23 +58,21 @@ class CreateTodo extends React.Component {
       completed: completed,
     };
 
-    if(_id) {
+    if (_id) {
       axios
-      .post(`http://localhost:4000/todos/update/${_id}`, newTodo)
-      .then((res) => {
-        this.props.history.push("/")
-      })
-      .catch((error) => console.error(error));
-    }
-    else {
+        .post(`http://localhost:4000/todos/update/${_id}`, newTodo)
+        .then((res) => {
+          this.props.history.push("/");
+        })
+        .catch((error) => console.error(error));
+    } else {
       axios
-      .post("http://localhost:4000/todos/add", newTodo)
-      .then((res) => {
-        this.props.history.push("/")
-      })
-      .catch((error) => console.error(error));
+        .post("http://localhost:4000/todos/add", newTodo)
+        .then((res) => {
+          this.props.history.push("/");
+        })
+        .catch((error) => console.error(error));
     }
-
 
     this.setState({
       description: "",
@@ -82,8 +80,6 @@ class CreateTodo extends React.Component {
       priority: "",
       completed: false,
     });
-
-
   }
 
   componentDidMount() {

@@ -9,8 +9,8 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <div className="container">
-          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container-fluid">
+          <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <Link to="/" className="navbar-brand">
               Simple Site
             </Link>
